@@ -36,6 +36,7 @@ static const NSInteger kTagOffset = 50;
 static const CGFloat kDefaultAnimationDuration = 0.3;
 static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction;
 
+static const CGSize kDefaultContentInset = (CGSize){5, 5};
 
 //////////////////////////////////////////////////////////////
 #pragma mark - Private interface
@@ -215,6 +216,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
     _longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureUpdated:)];
     _longPressGesture.numberOfTouchesRequired = 1;
+    _longPressGesture.minimumPressDuration = 0.8;
     _longPressGesture.delegate = self;
     _longPressGesture.cancelsTouchesInView = NO;
     [self addGestureRecognizer:_longPressGesture];
@@ -244,7 +246,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     self.mainSuperView = self;
     self.editing = NO;
     self.itemSpacing = 10;
-    self.style = GMGridViewStyleSwap;
+    self.style = GMGridViewStylePush;
     self.minimumPressDuration = 0.2;
     self.showFullSizeViewWithAlphaWhenTransforming = YES;
     self.minEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
@@ -316,7 +318,14 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
                 {
                     GMGridViewCell *cell = (GMGridViewCell *)obj;
                     cell.bounds = CGRectMake(0, 0, _itemSize.width, _itemSize.height);
-                    cell.contentView.frame = cell.bounds;
+                    CGSize inset = kDefaultContentInset;
+                    if ([self.dataSource respondsToSelector:@selector(GMGridView:contentInsetForItemAtIndex:)]) {
+                        inset = [self.dataSource defaultContentInsetForCellGMGridView:self];
+                    }
+                    CGRect contentFrame = CGRectZero;
+                    contentFrame.size = cell.bounds.size;
+                    contentFrame = CGRectInset(contentFrame, inset.width, inset.height);
+                    cell.contentView.frame = contentFrame;
                 }
             }];
         }
@@ -500,7 +509,9 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     }
     else if (gestureRecognizer == _longPressGesture)
     {
-        valid = (self.sortingDelegate || self.enableEditOnLongPress) && !isScrolling && !self.isEditing;
+//        valid = (self.sortingDelegate || self.enableEditOnLongPress) && !isScrolling && !self.isEditing;
+        valid = (self.sortingDelegate || self.enableEditOnLongPress) && !isScrolling;
+        
     }
     else if (gestureRecognizer == _sortingPanGesture) 
     {
@@ -1146,8 +1157,14 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     if (position != GMGV_INVALID_POSITION) 
     {
         if (!self.editing) {
-            [self cellForItemAtIndex:position].highlighted = NO;
-            [self.actionDelegate GMGridView:self didTapOnItemAtIndex:position];
+            GMGridViewCell *cell = [self cellForItemAtIndex:position];
+            cell.highlighted = NO;
+            
+            if ([self.actionDelegate respondsToSelector:@selector(GMGridView:didTapOnItem:atIndex:)]) {
+                [self.actionDelegate GMGridView:self didTapOnItem:cell atIndex:position];
+            } else {
+                [self.actionDelegate GMGridView:self didTapOnItemAtIndex:position];
+            }
         }
     }
     else
@@ -1175,13 +1192,23 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 - (GMGridViewCell *)newItemSubViewForPosition:(NSInteger)position
 {
     GMGridViewCell *cell = [self.dataSource GMGridView:self cellForItemAtIndex:position];
+#if DEBUG_LEVEL >= 2
+    cell.backgroundColor = [[UIColor orangeColor] colorWithAlphaComponent:0.5];
+#endif
+
     CGPoint origin = [self.layoutStrategy originForItemAtPosition:position];
     CGRect frame = CGRectMake(origin.x, origin.y, _itemSize.width, _itemSize.height);
-    
+    CGSize inset = kDefaultContentInset;
+    if ([self.dataSource respondsToSelector:@selector(defaultContentInsetForCellGMGridView:)]) {
+        inset = [self.dataSource defaultContentInsetForCellGMGridView:self];
+    }
+    CGRect contentFrame = CGRectZero;
+    contentFrame.size = frame.size;
+    contentFrame = CGRectInset(contentFrame, inset.width, inset.height);
     // To make sure the frame is not animated
     [self applyWithoutAnimation:^{
         cell.frame = frame;
-        cell.contentView.frame = cell.bounds;
+        cell.contentView.frame = contentFrame;
     }];
 
     cell.tag = position + kTagOffset;
@@ -1488,7 +1515,18 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
     return cell;
 }
-
+#pragma mark - Helpers
+//- (void) setupContentFrameForCell:(GMGridViewCell*)cell {
+//    CGRect frame = cell.bounds;
+//    UIEdgeInsets
+//    frame.origin = CGPointZero;
+//    CGSize cellSize = frame.size;
+//    frame.size.width = floorf(MIN(cellSize.width, cell.contentView.bounds.size.width));
+//    frame.size.height = floorf(MIN(cellSize.height, cell.contentView.bounds.size.height));
+//    frame.origin.x = floorf((cellSize.width - frame.size.width)/2);
+//    frame.origin.y = floorf((cellSize.height - frame.size.height)/2);
+//    cell.contentView.frame = frame;
+//}
 //////////////////////////////////////////////////////////////
 #pragma mark public methods
 //////////////////////////////////////////////////////////////

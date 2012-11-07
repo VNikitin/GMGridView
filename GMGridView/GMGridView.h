@@ -29,6 +29,12 @@
 #import <UIKit/UIKit.h>
 #import "GMGridView-Constants.h"
 #import "GMGridViewCell.h"
+#import "GMGridViewLayoutStrategies.h"
+
+#ifndef DEBUG_LEVEL 
+#define DEBUG_LEVEL 2
+#endif
+
 
 @protocol GMGridViewDataSource;
 @protocol GMGridViewActionDelegate;
@@ -129,7 +135,8 @@ typedef enum
 @optional
 // Allow a cell to be deletable. If not implemented, YES is assumed.
 - (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index;
-
+// setup contentView frame with inset 
+- (CGSize)defaultContentInsetForCellGMGridView:(GMGridView *)gridView ;
 @end
 
 
@@ -143,6 +150,8 @@ typedef enum
 - (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position;
 
 @optional
+- (void)GMGridView:(GMGridView *)gridView didTapOnItem:(GMGridViewCell*)cell atIndex:(NSInteger)position;
+
 // Tap on space without any items
 - (void)GMGridViewDidTapOnEmptySpace:(GMGridView *)gridView;
 // Called when the delete-button has been pressed. Required to enable editing mode.
