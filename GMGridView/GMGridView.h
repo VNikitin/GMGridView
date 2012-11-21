@@ -147,10 +147,10 @@ typedef enum
 @protocol GMGridViewActionDelegate <NSObject>
 
 @required
-- (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position;
 
 @optional
 - (void)GMGridView:(GMGridView *)gridView didTapOnItem:(GMGridViewCell*)cell atIndex:(NSInteger)position;
+- (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position __attribute__((deprecated));
 
 // Tap on space without any items
 - (void)GMGridViewDidTapOnEmptySpace:(GMGridView *)gridView;
@@ -175,6 +175,9 @@ typedef enum
 - (void)GMGridView:(GMGridView *)gridView exchangeItemAtIndex:(NSInteger)index1 withItemAtIndex:(NSInteger)index2;
 
 @optional
+- (BOOL)GMGridView:(GMGridView *)gridView shouldStartMovingCell:(GMGridViewCell *)cell;
+- (void)GMGridView:(GMGridView *)gridView didCancelMovingCell:(GMGridViewCell *)cell;
+
 // Sorting started/ended - indexes are not specified on purpose (not the right place to update data structure)
 - (void)GMGridView:(GMGridView *)gridView didStartMovingCell:(GMGridViewCell *)cell;
 - (void)GMGridView:(GMGridView *)gridView didEndMovingCell:(GMGridViewCell *)cell;
