@@ -130,14 +130,14 @@
     [self shake:NO];
     [self.contentView removeFromSuperview];
     
-    if(self.contentView)
-    {
-        contentView.frame = self.contentView.frame;
-    }
-    else
-    {
-        contentView.frame = self.bounds;
-    }
+//    if(self.contentView)
+//    {
+//        contentView.frame = self.contentView.frame;
+//    }
+//    else
+//    {
+//        contentView.frame = self.bounds;
+//    }
     
     _contentView = contentView;
     
@@ -284,6 +284,7 @@
     self.fullSizeView = nil;
     self.editing = NO;
     self.deleteBlock = nil;
+    [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 }
 
 - (void)shake:(BOOL)on

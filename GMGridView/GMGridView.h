@@ -31,6 +31,11 @@
 #import "GMGridViewCell.h"
 #import "GMGridViewLayoutStrategies.h"
 
+#ifndef DEBUG_LEVEL 
+#define DEBUG_LEVEL 2
+#endif
+
+
 @protocol GMGridViewDataSource;
 @protocol GMGridViewActionDelegate;
 @protocol GMGridViewSortingDelegate;
@@ -130,7 +135,8 @@ typedef enum
 @optional
 // Allow a cell to be deletable. If not implemented, YES is assumed.
 - (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index;
-
+// setup contentView frame with inset 
+- (CGSize)defaultContentInsetForCellGMGridView:(GMGridView *)gridView ;
 @end
 
 
@@ -141,9 +147,11 @@ typedef enum
 @protocol GMGridViewActionDelegate <NSObject>
 
 @required
-- (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position;
 
 @optional
+- (void)GMGridView:(GMGridView *)gridView didTapOnItem:(GMGridViewCell*)cell atIndex:(NSInteger)position;
+- (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position __attribute__((deprecated));
+
 // Tap on space without any items
 - (void)GMGridViewDidTapOnEmptySpace:(GMGridView *)gridView;
 // Called when the delete-button has been pressed. Required to enable editing mode.
@@ -167,6 +175,9 @@ typedef enum
 - (void)GMGridView:(GMGridView *)gridView exchangeItemAtIndex:(NSInteger)index1 withItemAtIndex:(NSInteger)index2;
 
 @optional
+- (BOOL)GMGridView:(GMGridView *)gridView shouldStartMovingCell:(GMGridViewCell *)cell;
+- (void)GMGridView:(GMGridView *)gridView didCancelMovingCell:(GMGridViewCell *)cell;
+
 // Sorting started/ended - indexes are not specified on purpose (not the right place to update data structure)
 - (void)GMGridView:(GMGridView *)gridView didStartMovingCell:(GMGridViewCell *)cell;
 - (void)GMGridView:(GMGridView *)gridView didEndMovingCell:(GMGridViewCell *)cell;
