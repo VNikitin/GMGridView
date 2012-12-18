@@ -29,7 +29,9 @@
 #import <UIKit/UIKit.h>
 #import "GMGridView-Constants.h"
 
-@interface GMGridViewCell : UIView
+@interface GMGridViewCell : UIView {
+    UIView *_contentView;
+}
 
 @property (nonatomic, strong) UIView *contentView;         // The contentView - default is nil
 @property (nonatomic, strong) UIImage *deleteButtonIcon;   // Delete button image

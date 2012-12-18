@@ -102,7 +102,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
         BOOL didStartTransformingCell:1;
         BOOL didEnterFullSizeForCell:1;
         BOOL didEndTransformingCell:1;        
-    } delegateCan;
+    } _delegateCan;
 }
 
 @property (nonatomic, readonly) BOOL itemsSubviewsCacheIsValid;
@@ -346,7 +346,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
                     GMGridViewCell *cell = (GMGridViewCell *)obj;
                     cell.bounds = CGRectMake(0, 0, _itemSize.width, _itemSize.height);
                     CGSize inset = kDefaultContentInset;
-                    if (delegateCan.defaultContentInsetForCellGMGridView == YES) {
+                    if (_delegateCan.defaultContentInsetForCellGMGridView != NO) {
                         inset = [self.dataSource defaultContentInsetForCellGMGridView:self];
                     }
                     CGRect contentFrame = CGRectZero;
@@ -419,37 +419,37 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
 - (void)setDataSource:(NSObject<GMGridViewDataSource> *)dataSource
 {
     _dataSource = dataSource;
-    [self reloadData];
-    delegateCan.numberOfItemsInGMGridView = [_dataSource respondsToSelector:@selector(numberOfItemsInGMGridView:)];
-    delegateCan.sizeForItemsInInterfaceOrientation = [_dataSource respondsToSelector:@selector(GMGridView:sizeForItemsInInterfaceOrientation:)];
-    delegateCan.cellForItemAtIndex = [_dataSource respondsToSelector:@selector(GMGridView:cellForItemAtIndex:)];
-    delegateCan.canDeleteItemAtIndex = [_dataSource respondsToSelector:@selector(GMGridView:canDeleteItemAtIndex:)];
-    delegateCan.defaultContentInsetForCellGMGridView = [_dataSource respondsToSelector:@selector(defaultContentInsetForCellGMGridView:)];
+//    [self reloadData];
+    _delegateCan.numberOfItemsInGMGridView = [_dataSource respondsToSelector:@selector(numberOfItemsInGMGridView:)];
+    _delegateCan.sizeForItemsInInterfaceOrientation = [_dataSource respondsToSelector:@selector(GMGridView:sizeForItemsInInterfaceOrientation:)];
+    _delegateCan.cellForItemAtIndex = [_dataSource respondsToSelector:@selector(GMGridView:cellForItemAtIndex:)];
+    _delegateCan.canDeleteItemAtIndex = [_dataSource respondsToSelector:@selector(GMGridView:canDeleteItemAtIndex:)];
+    _delegateCan.defaultContentInsetForCellGMGridView = [_dataSource respondsToSelector:@selector(defaultContentInsetForCellGMGridView:)];
 }
 - (void) setSortingDelegate:(NSObject<GMGridViewSortingDelegate> *)sortingDelegate {
     _sortingDelegate = sortingDelegate;
-    delegateCan.moveItemAtIndex = [_sortingDelegate respondsToSelector:@selector(GMGridView:moveItemAtIndex:toIndex:)];
-    delegateCan.exchangeItemAtIndex = [_sortingDelegate respondsToSelector:@selector(GMGridView:exchangeItemAtIndex:withItemAtIndex:)];
-    delegateCan.didStartMovingCell = [_sortingDelegate respondsToSelector:@selector(GMGridView:didStartMovingCell:)];
-    delegateCan.didEndMovingCell = [_sortingDelegate respondsToSelector:@selector(GMGridView:didEndMovingCell:)];
-    delegateCan.shouldAllowShaking = [_sortingDelegate respondsToSelector:@selector(GMGridView:shouldAllowShakingBehaviorWhenMovingCell:atIndex:)];
-    delegateCan.shouldStartMovingCell = [_sortingDelegate respondsToSelector:@selector(GMGridView:shouldStartMovingCell:)];
-    delegateCan.didCancelMovingCell = [_sortingDelegate respondsToSelector:@selector(GMGridView:didCancelMovingCell:)];
+    _delegateCan.moveItemAtIndex = [_sortingDelegate respondsToSelector:@selector(GMGridView:moveItemAtIndex:toIndex:)];
+    _delegateCan.exchangeItemAtIndex = [_sortingDelegate respondsToSelector:@selector(GMGridView:exchangeItemAtIndex:withItemAtIndex:)];
+    _delegateCan.didStartMovingCell = [_sortingDelegate respondsToSelector:@selector(GMGridView:didStartMovingCell:)];
+    _delegateCan.didEndMovingCell = [_sortingDelegate respondsToSelector:@selector(GMGridView:didEndMovingCell:)];
+    _delegateCan.shouldAllowShaking = [_sortingDelegate respondsToSelector:@selector(GMGridView:shouldAllowShakingBehaviorWhenMovingCell:atIndex:)];
+    _delegateCan.shouldStartMovingCell = [_sortingDelegate respondsToSelector:@selector(GMGridView:shouldStartMovingCell:)];
+    _delegateCan.didCancelMovingCell = [_sortingDelegate respondsToSelector:@selector(GMGridView:didCancelMovingCell:)];
 }
 - (void) setActionDelegate:(NSObject<GMGridViewActionDelegate> *)actionDelegate {
     _actionDelegate = actionDelegate;
-    delegateCan.didTapOnEmptySpace = [_actionDelegate respondsToSelector:@selector(GMGridViewDidTapOnEmptySpace:)];
-    delegateCan.didTapOnItemAtIndex = [_actionDelegate respondsToSelector:@selector(GMGridView:didTapOnItem:atIndex:)];
-    delegateCan.processDeleteAction = [_actionDelegate respondsToSelector:@selector(GMGridView:processDeleteActionForItemAtIndex:)];
-    delegateCan.changedEdit = [_actionDelegate respondsToSelector:@selector(GMGridView:changedEdit:)];
+    _delegateCan.didTapOnEmptySpace = [_actionDelegate respondsToSelector:@selector(GMGridViewDidTapOnEmptySpace:)];
+    _delegateCan.didTapOnItemAtIndex = [_actionDelegate respondsToSelector:@selector(GMGridView:didTapOnItem:atIndex:)];
+    _delegateCan.processDeleteAction = [_actionDelegate respondsToSelector:@selector(GMGridView:processDeleteActionForItemAtIndex:)];
+    _delegateCan.changedEdit = [_actionDelegate respondsToSelector:@selector(GMGridView:changedEdit:)];
 }
 - (void) setTransformDelegate:(NSObject<GMGridViewTransformationDelegate> *)transformDelegate {
     _transformDelegate = transformDelegate;
-    delegateCan.sizeInFullSizeForCell = [_transformDelegate respondsToSelector:@selector(GMGridView:sizeInFullSizeForCell:atIndex:inInterfaceOrientation:)];
-    delegateCan.fullSizeViewForCell = [_transformDelegate respondsToSelector:@selector(GMGridView:fullSizeViewForCell:atIndex:)];
-    delegateCan.didStartTransformingCell = [_transformDelegate respondsToSelector:@selector(GMGridView:didStartTransformingCell:)];
-    delegateCan.didEnterFullSizeForCell = [_transformDelegate respondsToSelector:@selector(GMGridView:didEnterFullSizeForCell:)];
-    delegateCan.didEndTransformingCell = [_transformDelegate respondsToSelector:@selector(GMGridView:didEndTransformingCell:)];
+    _delegateCan.sizeInFullSizeForCell = [_transformDelegate respondsToSelector:@selector(GMGridView:sizeInFullSizeForCell:atIndex:inInterfaceOrientation:)];
+    _delegateCan.fullSizeViewForCell = [_transformDelegate respondsToSelector:@selector(GMGridView:fullSizeViewForCell:atIndex:)];
+    _delegateCan.didStartTransformingCell = [_transformDelegate respondsToSelector:@selector(GMGridView:didStartTransformingCell:)];
+    _delegateCan.didEnterFullSizeForCell = [_transformDelegate respondsToSelector:@selector(GMGridView:didEnterFullSizeForCell:)];
+    _delegateCan.didEndTransformingCell = [_transformDelegate respondsToSelector:@selector(GMGridView:didEndTransformingCell:)];
 }
 - (void)setMainSuperView:(UIView *)mainSuperView
 {
@@ -496,14 +496,16 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
 {
     [self setEditing:editing animated:NO];
 	
-    if (delegateCan.changedEdit == YES) {
-        [self.actionDelegate GMGridView:self changedEdit:editing];
-    }
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    if (delegateCan.processDeleteAction == YES
+    NSLog(@"_delegateCan.changedEdit = %i", _delegateCan.changedEdit);
+    if (_delegateCan.changedEdit != NO) {
+        [self.actionDelegate GMGridView:self changedEdit:editing];
+    }
+
+    if (_delegateCan.processDeleteAction != NO
         && [self isInTransformingState] == NO
         && ((self.isEditing == YES && editing == NO) || (self.isEditing == NO && editing == YES)))
     {
@@ -551,7 +553,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
 {    
     BOOL valid = YES;
     BOOL isScrolling = self.isDragging || self.isDecelerating;
-    
+
     if (gestureRecognizer == _tapGesture) 
     {
         if (self.editing && self.disableEditOnEmptySpaceTap) {
@@ -565,13 +567,14 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
     }
     else if (gestureRecognizer == _longPressGesture)
     {
-//        valid = (self.sortingDelegate || self.enableEditOnLongPress) && !isScrolling && !self.isEditing;
         valid = (self.sortingDelegate || self.enableEditOnLongPress) && !isScrolling;
-        
     }
     else if (gestureRecognizer == _sortingPanGesture) 
     {
         valid = (_sortMovingItem != nil && [_longPressGesture hasRecognizedValidGesture]);
+        if (!valid) {
+            NSLog(@"not valid _sortingPanGesture");
+        }
     }
     else if(gestureRecognizer == _rotationGesture || gestureRecognizer == _pinchGesture || gestureRecognizer == _panGesture)
     {
@@ -590,7 +593,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
             valid = NO;
         }
     }
-    
+//    NSLog(@"should begin %@ %@", valid ? @"YES" : @"NO", [gestureRecognizer description]);
     return valid;
 }
 
@@ -610,7 +613,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
                 self.editing = YES;
             }
         }
-        return;
+//        return;
     }
     
     switch (longPressGesture.state) 
@@ -629,9 +632,22 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
                     }
                 }
             }
-            
-            break;
         }
+            break;
+        case UIGestureRecognizerStateChanged:
+        {
+//            if (_sortMovingItem)
+//            {
+//                CGPoint translation = [longPressGesture translationInView:self];
+//                CGPoint offset = translation;
+//                
+//                _sortMovingItem.transform = CGAffineTransformMakeTranslation(offset.x, offset.y);
+//
+//                CGPoint location = [longPressGesture locationInView:self];
+//                [self sortingMoveDidContinueToPoint:location];
+//            }
+        }
+            break;
         case UIGestureRecognizerStateEnded:
         {
             [_sortingPanGesture end];
@@ -641,9 +657,8 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
                 CGPoint location = [longPressGesture locationInView:self];
                 [self sortingMoveDidStopAtPoint:location];
             }
-            
-            break;
         }
+            break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateFailed:
         {
@@ -654,8 +669,8 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
                 CGPoint location = [longPressGesture locationInView:self];
                 [self sortingDidCanceledAtPoint:location];
             }
-            break;
         }
+            break;
         default:
             break;
     }
@@ -663,7 +678,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
 
 - (void)sortingPanGestureUpdated:(UIPanGestureRecognizer *)panGesture
 {
-    switch (panGesture.state) 
+    switch (panGesture.state)
     {
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateFailed:
@@ -676,26 +691,27 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
         {
             _autoScrollActive = NO;
 //            NSLog(@"ended panGuesture");
-            break;
         }
+            break;
         case UIGestureRecognizerStateBegan:
         {            
             _autoScrollActive = YES;
             [self sortingAutoScrollMovementCheck];
-            
-            break;
         }
+            break;            
         case UIGestureRecognizerStateChanged:
         {
+
             CGPoint translation = [panGesture translationInView:self];
             CGPoint offset = translation;
             CGPoint locationInScroll = [panGesture locationInView:self];
+            NSLog(@"old transform %@", NSStringFromCGAffineTransform(_sortMovingItem.transform));
             
             _sortMovingItem.transform = CGAffineTransformMakeTranslation(offset.x, offset.y);
+            NSLog(@"new transform %@", NSStringFromCGAffineTransform(_sortMovingItem.transform));
             [self sortingMoveDidContinueToPoint:locationInScroll];
-            
-            break;
         }
+            break;
         default:
             break;
     }
@@ -803,11 +819,12 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
                           delay:0
                         options:0
                      animations:^{
+                         NSLog(@"_sortMovingItem.transform = CGAffineTransformIdentity");
                          _sortMovingItem.transform = CGAffineTransformIdentity;
                          _sortMovingItem.frame = newFrame;
                      }
                      completion:^(BOOL finished){
-                         if (delegateCan.didCancelMovingCell) {
+                         if (_delegateCan.didCancelMovingCell) {
                              [_sortingDelegate GMGridView:self didCancelMovingCell:_sortMovingItem];
                          }
                          _sortMovingItem = nil;
@@ -818,7 +835,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
      ];
 }
 - (BOOL) shouldStartSortingAtPoint:(CGPoint)point {
-    if (delegateCan.shouldStartMovingCell) {
+    if (_delegateCan.shouldStartMovingCell) {
         NSInteger position = [self.layoutStrategy itemPositionFromLocation:point];
         GMGridViewCell *item = [self cellForItemAtIndex:position];
 
@@ -845,12 +862,12 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
     _sortFuturePosition = _sortMovingItem.tag - kTagOffset;
     _sortMovingItem.tag = 0;
     
-    if (delegateCan.didStartMovingCell)
+    if (_delegateCan.didStartMovingCell)
     {
         [self.sortingDelegate GMGridView:self didStartMovingCell:_sortMovingItem];
     }
     
-    if (delegateCan.shouldAllowShaking)
+    if (_delegateCan.shouldAllowShaking)
     {
         [_sortMovingItem shake:[self.sortingDelegate GMGridView:self shouldAllowShakingBehaviorWhenMovingCell:_sortMovingItem atIndex:position]];
     }
@@ -879,11 +896,12 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
                           delay:0
                         options:0
                      animations:^{
+                         NSLog(@"_sortMovingItem.transform = CGAffineTransformIdentity");
                          _sortMovingItem.transform = CGAffineTransformIdentity;
                          _sortMovingItem.frame = newFrame;
                      }
                      completion:^(BOOL finished){
-                         if (delegateCan.didEndMovingCell == YES)
+                         if (_delegateCan.didEndMovingCell != NO)
                          {
                              [self.sortingDelegate GMGridView:self didEndMovingCell:_sortMovingItem];
                          }
@@ -900,6 +918,11 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
 {
     int position = [self.layoutStrategy itemPositionFromLocation:point];
     int tag = position + kTagOffset;
+//    NSLog(@"sortingMoveDidContinueToPoint position = %i, tag = %i...", position, tag);
+//    if (position != GMGV_INVALID_POSITION && position != _sortFuturePosition && position < _numberTotalItems)
+//    {
+//        NSLog(@"not recognized sorting");
+//    }
     
     if (position != GMGV_INVALID_POSITION && position != _sortFuturePosition && position < _numberTotalItems) 
     {
@@ -1120,6 +1143,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
 
 - (void)transformingGestureDidBeginWithGesture:(UIGestureRecognizer *)gesture
 {
+    NSLog(@"transformation begin, _inTransformingState = %@\n%@ ", _inTransformingState ? @"YES":@"NO", [gesture description]);
     _inFullSizeMode = NO;
     
     if (_inTransformingState && [gesture isKindOfClass:[UIPinchGestureRecognizer class]]) 
@@ -1156,7 +1180,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
         _transformingItem.fullSize = [self.transformDelegate GMGridView:self sizeInFullSizeForCell:_transformingItem atIndex:positionTouch inInterfaceOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
         _transformingItem.fullSizeView = [self.transformDelegate GMGridView:self fullSizeViewForCell:_transformingItem atIndex:positionTouch];
         
-        if (delegateCan.didStartTransformingCell)
+        if (_delegateCan.didStartTransformingCell)
         {
             [self.transformDelegate GMGridView:self didStartTransformingCell:_transformingItem];
         }
@@ -1200,7 +1224,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
             _inTransformingState = YES;
             _inFullSizeMode = YES;
             
-            if (delegateCan.didEnterFullSizeForCell)
+            if (_delegateCan.didEnterFullSizeForCell)
             {
                 [self.transformDelegate GMGridView:self didEnterFullSizeForCell:_transformingItem];
             }
@@ -1245,7 +1269,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
                                  transformingView.fullSizeView = nil;
                                  _inFullSizeMode = NO;
                                  
-                                 if (delegateCan.didEndTransformingCell == YES)
+                                 if (_delegateCan.didEndTransformingCell != NO)
                                  {
                                      [self.transformDelegate GMGridView:self didEndTransformingCell:transformingView];
                                  }
@@ -1275,7 +1299,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
             GMGridViewCell *cell = [self cellForItemAtIndex:position];
             cell.highlighted = NO;
             
-            if (delegateCan.didTapOnItemAtIndex) {
+            if (_delegateCan.didTapOnItemAtIndex) {
                 [self.actionDelegate GMGridView:self didTapOnItem:cell atIndex:position];
             }
             else {
@@ -1289,7 +1313,7 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
     }
     else
     { 
-        if(delegateCan.didTapOnEmptySpace == YES)
+        if(_delegateCan.didTapOnEmptySpace != NO)
         {
             [self.actionDelegate GMGridViewDidTapOnEmptySpace:self];
         }
@@ -1313,13 +1337,13 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
 {
     GMGridViewCell *cell = [self.dataSource GMGridView:self cellForItemAtIndex:position];
 #if DEBUG_LEVEL >= 2
-    cell.backgroundColor = [[UIColor orangeColor] colorWithAlphaComponent:0.5];
+    cell.backgroundColor = [[UIColor orangeColor] colorWithAlphaComponent:0.2];
 #endif
 
     CGPoint origin = [self.layoutStrategy originForItemAtPosition:position];
     CGRect frame = CGRectMake(origin.x, origin.y, _itemSize.width, _itemSize.height);
     CGSize inset = kDefaultContentInset;
-    if (delegateCan.defaultContentInsetForCellGMGridView == YES) {
+    if (_delegateCan.defaultContentInsetForCellGMGridView != NO) {
         inset = [self.dataSource defaultContentInsetForCellGMGridView:self];
     }
     CGRect contentFrame = CGRectZero;
@@ -1342,12 +1366,12 @@ static const CGSize kDefaultContentInset = (CGSize){5, 5};
         if (index != GMGV_INVALID_POSITION) 
         {
             BOOL canDelete = YES;
-            if (delegateCan.canDeleteItemAtIndex == YES)
+            if (_delegateCan.canDeleteItemAtIndex != NO)
             {
                 canDelete = [weakSelf.dataSource GMGridView:weakSelf canDeleteItemAtIndex:index];
             }
             
-            if (canDelete == YES && delegateCan.processDeleteAction == YES)
+            if (canDelete == YES && _delegateCan.processDeleteAction != NO)
             {
                 [weakSelf.actionDelegate GMGridView:weakSelf processDeleteActionForItemAtIndex:index];
             }

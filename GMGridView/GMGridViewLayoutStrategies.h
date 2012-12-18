@@ -110,7 +110,7 @@ typedef enum {
 @property (nonatomic, readonly) BOOL centeredGrid;
 
 @property (nonatomic, readonly) NSInteger itemCount;
-@property (nonatomic, readonly) UIEdgeInsets edgeInsets;
+@property (nonatomic, assign) UIEdgeInsets edgeInsets;
 @property (nonatomic, readonly) CGRect gridBounds;
 @property (nonatomic, readonly) CGSize contentSize;
 

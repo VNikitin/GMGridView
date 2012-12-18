@@ -143,7 +143,7 @@
     
     self.contentView.autoresizingMask = UIViewAutoresizingNone;
     [self addSubview:self.contentView];
-    
+    [self sendSubviewToBack:self.contentView];
     [self bringSubviewToFront:self.deleteButton];
 }
 
@@ -198,7 +198,6 @@
         }else {
             self.deleteButton.alpha = editing ? 1.f : 0.f;
         }
-		
         self.contentView.userInteractionEnabled = !editing;
         [self shakeStatus:editing];
     }
